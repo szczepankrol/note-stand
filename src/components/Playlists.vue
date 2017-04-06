@@ -1,15 +1,9 @@
 <template>
   <div>
     <div class="overview">
-      <h1>Songs</h1>
-      <router-link :to="{ name: 'song', params: {slug: 'new', mode: 'edit'}}">Add song</router-link>
-
+      <h1>Playlists</h1>
       <ul>
-        <li v-for="song in songList">
-          <router-link :to="{ name: 'song', params: { slug: song.slug, mode: 'view' }}">
-            {{song.name}}
-          </router-link>
-        </li>
+
       </ul>
     </div>
   </div>
@@ -18,7 +12,7 @@
 <script>
   import { mapGetters } from 'vuex'
   export default {
-    name: 'Songs', 
+    name: 'Playlists', 
     methods: {
     },
     computed: {

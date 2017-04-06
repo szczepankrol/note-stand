@@ -10,18 +10,18 @@ export default new Router({
 	routes: [
 	{
 		path: '/',
-		name: 'home',
+		name: 'songs',
 		component: Songs
 	},
 	{
-		path: '/song/:slug',
+		path: '/song/:slug/:mode',
 		name: 'song',
 		component: Song
 	},
-	// {
-	// 	path: '/category/:slug',
-	// 	name: 'category',
-	// 	component: Category
-	// }
+	{
+		path: '/playlists',
+		name: 'playlists',
+		component: Songs
+	},
 	]
 })

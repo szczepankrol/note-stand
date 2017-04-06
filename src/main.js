@@ -8,74 +8,88 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 Vue.config.productionTip = false
 
-
 const store = new Vuex.Store({
 	state: {
+		showHeader: true,
 		songs: [
 		{
 			'slug': 'song-1',
 			'name': 'Song 1',
-		},
-		{
-			'slug': 'song-2',
-			'name': 'Song 2',
-		},
-		],
-		songChords: [
-		{
-			'slug': 'song-1',
-			'defaultKey': 'C',
+			'defaultKey': 'E',
 			'sections': [
-				{
-					'name': 'Verse',
-					'slug': 'verse',
-					'chords': [
-						[
-							[0, 0, 0],
-							[5, 0, 1],
-							[7, 0, 2],
-						],
-						[
-							[5, 0],
-							[8, 1],
-							[0, 0, 4],
-						],
-					],
-				},
-				{
-					'name': 'Chorus',
-					'slug': 'chorus',
-					'chords': [
-						[
-							[3, 0, 0],
-							[4, 0, 1],
-							[1, 1, 2],
-						],
-						[
-							[4, 0],
-							[12, 1],
-							[0, 0, 2],
-						],
-					],
-				}
+			{
+				'name': 'Verse',
+				'slug': 'verse',
+				'chords': [
+				[
+				[0, 0, 0],
+				[5, 0, 1],
+				[7, 0, 2],
+				],
+				[
+				[5, 0, 0],
+				[8, 1, 0],
+				[0, 0, 4],
+				],
+				],
+			},
+			{
+				'name': 'Chorus',
+				'slug': 'chorus',
+				'chords': [
+				[
+				[3, 0, 0],
+				[4, 0, 1],
+				[1, 1, 2],
+				],
+				[
+				[4, 0, 0],
+				[12, 1, 0],
+				[0, 0, 2],
+				],
+				],
+			}
 			],
-		}
+		},
 		],
 	},
 	mutations: {
+		createNewEmptySong(state){
+			state.songs[state.songs.length] = {
+				'name': 'New song title',
+				'slug': 'new',
+				'defaultKey': 'C',
+				'sections': [],
+			}
+		},
+		addNewSection(state, payload){
+			let chosenSong = state.songs.filter(song => song.slug === payload.songSlug)[0]
+			let newSection = {
+				'name': payload.name,
+				'slug': slugFromString(payload.name),
+				'chords': [],
+			}
+			chosenSong.sections.push(newSection);
+			console.log(chosenSong);
+		},
 	},
 	actions: {
+
 	},
 	getters: {
 		getAllSongs: ({songs}) => songs,
 
-		getAllSongChords: ({songChords}) => songChords,
-
-		getSongChordsBySongSlug: (state, getters) => (songSlug) => {
-			return getters.getAllSongChords.filter(songChord => songChord.slug === songSlug)
+		getSongBySongSlug: (state, getters) => (songSlug) => {
+			return getters.getAllSongs.filter(song => song.slug === songSlug)
 		},
+
+		getShowHeader: ({showHeader}) => showHeader,
 	},
 })
+
+function slugFromString(string){
+	return string.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+}
 
 
 new Vue({

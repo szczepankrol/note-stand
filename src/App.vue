@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="page">
-      <top class="page__header"></top>
+      <top class="page__header" v-show="showHeader"></top>
       <router-view class=""></router-view>
     </div>
   </div>
@@ -9,11 +9,17 @@
 
 <script>
   import Top from '@/components/Top.vue'
+  import { mapGetters } from 'vuex'
   export default {
     name: 'app',
     components: {
       Top
     },
+    computed: {
+      ...mapGetters({
+        showHeader: 'getShowHeader',
+      })
+    }
   }
 </script>
 
@@ -23,7 +29,7 @@
  *, *::before, *::after{
   box-sizing: border-box;
 }
- 
+
 body, input, textarea{
   font-family: $font-family;
   line-height: 1.5;
@@ -67,14 +73,11 @@ a{
     margin: 5% 0 5%;
   }
   &__main{
-    display: flex;
+    display: block;
   }
-  &__nav{
-    width: 20%;
-    padding-right: 50px;
-  }
-  &__content{
-    width: 80%;
-  }
+}
+
+select{
+  padding: 10px;
 }
 </style>
