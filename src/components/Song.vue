@@ -20,18 +20,41 @@
 
       <div class="song__section" v-for="section in currentSongSections">
         <span class="song__section__name">{{section.name}}:</span>
-        <div class="song__section__line" v-for="line in section.chords">
+        <div class="song__section__line" v-for="(line, index) in section.chords">
           <span class="song__section__chord" v-for="chord in line" v-html="displayChord(chord)"></span>
+
+          <span v-if="editMode" @click="chooseNewChord(section.slug, index)">+ Add new chord</span>
+          
+
         </div>
+
+        <div v-if="editMode" @click="addNewLine(section.slug)">+ Add new line</div>
+
+
       </div>
 
-      <div v-if="editMode" @click="showNewSectionField()">Add new section</div>
+      <div v-if="editMode" @click="showNewSectionField()">+ Add new section</div>
       <div class="" v-if="newSectionField">
         <form v-on:submit.prevent="newSectionFormSubmit">
           <input type="text" v-model="newSectionName">
           <button type="submit">Add</button>
         </form>
       </div>
+
+
+      <div class="chord-creator" v-if="chordCreator">
+        <select name="step" v-model="currentCreatedChord[0]">
+          <option v-for="(step, index) in chordMap.steps" :value="index">{{step}}</option>
+        </select>        
+        <select name="type" v-model="currentCreatedChord[1]">
+          <option v-for="(type, index) in chordMap.type" :value="index">{{type}}</option>
+        </select>  
+        <select name="add" v-model="currentCreatedChord[2]">
+          <option v-for="(add, index) in chordMap.add" :value="index">{{add}}</option>
+        </select>
+        <span @click="addNewChord()">+ Save chord</span>
+      </div>
+
 
     </div>
   </div>
@@ -45,12 +68,16 @@
       return {
         chordMap: {
           'steps': ['C', 'Cis', 'D', 'Dis', 'E', 'F', 'Fis', 'G', 'Gis', 'A', 'Ais', 'H'],
+          'type': ['Major', 'Minor', 'Diminished', 'Augmented'],
           'add': ['', '7', '7+', 'sus2', 'sus4'],
         },
         currentSongKey: undefined,
         currentSongKeyStep: undefined,
         newSectionField: false,
         newSectionName: '',
+        chordCreator: false,
+        currentCreatedChord: [0,0,0],
+        currentCreatedChordPosition: [],
       }
     },
     created (){
@@ -92,9 +119,32 @@
         this.newSectionField = true;
       },
       newSectionFormSubmit(){
-        this.$store.commit('addNewSection', {songSlug: 'new', name: this.newSectionName})
+        let songSlug = this.$route.params.slug;
+        this.$store.commit('addNewSection', {songSlug: songSlug, name: this.newSectionName})
         this.newSectionName = '';
         this.newSectionField = false;
+      },
+      addNewLine(sectionSlug){
+        let songSlug = this.$route.params.slug;
+        this.$store.commit('addNewLine', {songSlug: songSlug, sectionSlug: sectionSlug})
+      },
+      chooseNewChord(sectionSlug, lineIndex){
+        this.chordCreator = true;
+        this.currentCreatedChordPosition[0] = sectionSlug;
+        this.currentCreatedChordPosition[1] = lineIndex;
+      },
+      addNewChord(){
+        let songSlug = this.$route.params.slug;
+        let sectionSlug = this.currentCreatedChordPosition[0];
+        let lineIndex = this.currentCreatedChordPosition[1];
+        let chord = this.currentCreatedChord;
+        this.$store.commit('addNewChord', {songSlug: songSlug, sectionSlug: sectionSlug, lineIndex: lineIndex, chord: chord})
+        this.resetChordCreator();
+      },
+      resetChordCreator(){
+        this.chordCreator = false;
+        this.currentCreatedChord = [0,0,0];
+        this.currentCreatedChordPosition = [];
       },
     },
     computed: {

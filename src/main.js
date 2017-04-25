@@ -70,7 +70,17 @@ const store = new Vuex.Store({
 				'chords': [],
 			}
 			chosenSong.sections.push(newSection);
-			console.log(chosenSong);
+		},
+		addNewLine(state, payload){
+			let chosenSong = state.songs.filter(song => song.slug === payload.songSlug)[0]
+			let chosenSection = chosenSong['sections'].filter(section => section.slug === payload.sectionSlug)[0]
+			chosenSection.chords.push([]);
+		},
+		addNewChord(state, payload){
+			let chosenSong = state.songs.filter(song => song.slug === payload.songSlug)[0]
+			let chosenSection = chosenSong['sections'].filter(section => section.slug === payload.sectionSlug)[0]
+			let chosenLine = chosenSection['chords'][payload.lineIndex]
+			chosenLine.push(payload.chord);
 		},
 	},
 	actions: {
